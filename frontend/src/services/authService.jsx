@@ -2,22 +2,36 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000/api/auth/";
 
-export const register = async (email, password) => {
-  return await axios.post(API_URL + "register", { email, password });
+// Registro (usuario + email + password)
+export const register = async (usuario, email, password) => {
+  return await axios.post(API_URL + "register", { usuario, email, password });
 };
 
-export const login = async (email, password) => {
-  const response = await axios.post(API_URL + "login", { email, password });
-  if (response.data.token) {
-    localStorage.setItem("user", JSON.stringify(response.data));
+// Login (usuario + password)
+export const login = async (usuario, password) => {
+  const res = await axios.post(API_URL + "login", { usuario, password });
+
+  if (res.data.token) {
+    sessionStorage.setItem(
+      "user",
+      JSON.stringify({
+        token: res.data.token,
+        usuario: res.data.usuario,
+      })
+    );
   }
-  return response.data;
+
+  return res.data;
 };
 
-export const logout = () => {
-  localStorage.removeItem("user");
-};
+// Obtener usuario actual desde sessionStorage
+export function getCurrentUser() {
+  const user = sessionStorage.getItem("user");
+  return user ? JSON.parse(user) : null;
+}
 
-export const getCurrentUser = () => {
-  return JSON.parse(localStorage.getItem("user"));
-};
+// Logout
+export function logout() {
+  sessionStorage.removeItem("user");
+  window.location.href = "/login"; // redirigir tras logout
+}

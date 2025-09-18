@@ -5,6 +5,7 @@ class User(db_pg.Model):
     __tablename__ = "usuarios"
 
     id = db_pg.Column(db_pg.Integer, primary_key=True)
+    usuario = db_pg.Column(db_pg.String(120), unique=True, nullable=False)
     email = db_pg.Column(db_pg.String(120), unique=True, nullable=False)
     password_hash = db_pg.Column(db_pg.String(200), nullable=False)
 

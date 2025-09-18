@@ -1,44 +1,68 @@
 import React, { useState } from "react";
-import { login } from "../services/authService";
+import axios from "axios";
 
 function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    usuario: "",
+    password: "",
+  });
   const [message, setMessage] = useState("");
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
-      window.location.href = "/"; // redirigir al home
+      const res = await axios.post("http://127.0.0.1:5000/api/auth/login", formData);
+
+      // Guardar token y usuario en sessionStorage
+      sessionStorage.setItem(
+        "user",
+        JSON.stringify({
+          token: res.data.token,
+          usuario: res.data.usuario,
+        })
+      );
+
+      setMessage("Login exitoso ✅");
+      window.location.href = "/"; // redirigir al Home
     } catch (err) {
-      setMessage("Credenciales inválidas");
+      setMessage(err.response?.data?.error || "Error en el login ❌");
     }
   };
 
   return (
-    <div>
+    <div style={{ maxWidth: "400px", margin: "auto", marginTop: "50px" }}>
       <h2>Iniciar Sesión</h2>
       <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <br />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <br />
+        <div>
+          <label>Usuario:</label>
+          <input
+            type="text"
+            name="usuario"
+            value={formData.usuario}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Contraseña:</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+        </div>
         <button type="submit">Entrar</button>
       </form>
-      {message && <p style={{ color: "red" }}>{message}</p>}
+      {message && <p>{message}</p>}
     </div>
   );
 }

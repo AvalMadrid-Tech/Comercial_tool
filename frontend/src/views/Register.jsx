@@ -1,42 +1,67 @@
 import React, { useState } from "react";
-import { register } from "../services/authService";
+import axios from "axios";
 
 function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    usuario: "",
+    email: "",
+    password: "",
+  });
+
   const [message, setMessage] = useState("");
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await register(email, password);
-      setMessage("Usuario registrado correctamente, ahora puedes iniciar sesión");
+      const res = await axios.post("http://127.0.0.1:5000/api/auth/register", formData);
+      setMessage(res.data.message || "Registro exitoso ✅");
     } catch (err) {
-      setMessage("Error al registrar el usuario");
+      setMessage(err.response?.data?.error || "Error en el registro ❌");
     }
   };
 
   return (
-    <div>
-      <h2>Registro</h2>
+    <div style={{ maxWidth: "400px", margin: "auto", marginTop: "50px" }}>
+      <h2>Registro de Usuario</h2>
       <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <br />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <br />
-        <button type="submit">Registrarse</button>
+        <div>
+          <label>Usuario:</label>
+          <input
+            type="text"
+            name="usuario"
+            value={formData.usuario}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Correo:</label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Contraseña:</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <button type="submit">Registrar</button>
       </form>
       {message && <p>{message}</p>}
     </div>

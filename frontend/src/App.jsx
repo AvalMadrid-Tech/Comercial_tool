@@ -5,6 +5,7 @@ import SolicitudSociedades from './views/SolicitudSociedades';
 import Home from "./views/Home"
 import Login from "./views/Login";
 import Register from "./views/Register";
+import ResetPassword from './views/ResetPassword';
 import Navbar from "./components/Navbar";
 
 
@@ -21,6 +22,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login/>} />
           <Route path="/register" element={<Register/>} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/alta" element={<AltaIdentidades/>} />  
           <Route path="/autonomos" element={<SolicitudAutonomos />} />
           <Route path="/sociedad" element={<SolicitudSociedades />} />

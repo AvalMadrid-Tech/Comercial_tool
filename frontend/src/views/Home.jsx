@@ -1,27 +1,26 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { getCurrentUser } from "../services/authService";
 
 function Home() {
-  const navigate = useNavigate();
+  const user = getCurrentUser();
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h2>Selecciona</h2>
-      <div style={{ marginTop: "20px" }}>
-        <button
-          style={{ marginRight: "10px", padding: "10px 20px" }}
-          onClick={() => navigate("/sociedad")}
-        >
-          Sociedad
-        </button>
+      <h1>Bienvenido a la App</h1>
 
-        <button
-          style={{ padding: "10px 20px" }}
-          onClick={() => navigate("/autonomos")}
-        >
-          Autonomo
-        </button>
-      </div>
+      {user ? (
+        <p>Estás logueado ✅</p>
+      ) : (
+        <div>
+          <p>No has iniciado sesión</p>
+          <Link to="/login">
+            <button style={{ padding: "8px 16px", marginTop: "10px" }}>
+              Ir a Login
+            </button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

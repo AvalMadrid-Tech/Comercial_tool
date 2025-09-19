@@ -1,5 +1,5 @@
 import os
-from backend.connections.sql_connect import get_connection
+from connections.sql_connect import get_connection
 
 def test_connection():
     try:

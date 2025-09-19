@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate, Link } from "react-router-dom"; // 👈 importar Link
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -7,6 +8,7 @@ function Login() {
     password: "",
   });
   const [message, setMessage] = useState("");
+  const navigate = useNavigate(); // 👈 inicializar
 
   const handleChange = (e) => {
     setFormData({
@@ -20,7 +22,6 @@ function Login() {
     try {
       const res = await axios.post("http://127.0.0.1:5000/api/auth/login", formData);
 
-      // Guardar token y usuario en sessionStorage
       sessionStorage.setItem(
         "user",
         JSON.stringify({
@@ -30,7 +31,7 @@ function Login() {
       );
 
       setMessage("Login exitoso ✅");
-      window.location.href = "/"; // redirigir al Home
+      navigate("/alta"); // redirige
     } catch (err) {
       setMessage(err.response?.data?.error || "Error en el login ❌");
     }
@@ -62,6 +63,15 @@ function Login() {
         </div>
         <button type="submit">Entrar</button>
       </form>
+
+      {/* 👇 aquí el link correcto */}
+      <div style={{ marginTop: "10px" }}>
+        <p>
+          ¿No tienes cuenta?{" "}
+          <Link to="/register">Registrate</Link>
+        </p>
+      </div>
+
       {message && <p>{message}</p>}
     </div>
   );

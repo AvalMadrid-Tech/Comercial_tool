@@ -1,230 +1,82 @@
 import React, { useState } from "react";
 
 function SolicitudSociedades() {
-  const [formData, setFormData] = useState({
-    razonSocial: "",
-    nombreComercial: "",
-    nif: "",
-    direccion: "",
-    localidad: "",
-    cp: "",
-    telefono: "",
-    movil: "",
-    email: "",
-    representanteLegal: "",
-    cargo: "",
-    fechaConstitucion: "",
-    fechaInicioActividad: "",
-    cnae: "",
-    actividad: "",
-    importe: "",
-    plazo: "",
-  });
+  const [titular, setTitular] = useState("");
+  const [nombre, setNombre] = useState("");
+  const [apellidos, setApellidos] = useState("");
+  const [nombreComercial, setNombreComercial] = useState("");
+  const [cit, setCit] = useState("");
+  const [actividad, setActividad] = useState("");
+  const [codCnae, setCodCnae] = useState("");
+  const [fechaConstitucion, setFechaConstitucion] = useState("");
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Solicitud Sociedad:", formData);
+
+    const codGestor = sessionStorage.getItem("usuario") || "WEB";
+
+    const payload = {
+      TITULAR: titular,
+      NOMBRE: nombre,
+      APELLIDOS: apellidos,
+      NOMBRE_COMERCIAL: nombreComercial,
+      CIT: cit,
+      ACTIVIDAD: actividad,
+      COD_CNAE: codCnae,
+      COD_DELEGACION: "28",
+      TIPO_IDENTIDAD: "J", // Sociedades → J
+      REGIMEN_ECONOMICO: "S",
+      F_ALTA: new Date().toISOString().split("T")[0],
+      F_CONSTITUCION: fechaConstitucion,
+      COD_SOPORTE: 1,
+      ID_OBSERVACION: 0,
+      PAIS_NIF: "ES",
+      COD_GESTOR: codGestor, // del sessionStorage
+      VALIDEZ_DATOS: "S",
+      PROCESO_ALTA: "GE", // 🔹 corregido
+      EXPORTA: "N",
+      NIVEL_COMPLETITUD: 0,
+      CLASIF_PYME: "S",
+      G3_BLOQUEO: "X",
+      IDIOMA: "S",
+      DATOS_REGISTRALES: " ",
+      NUM_SS: " ",
+      EXP_EXTERNO_WEB: " ",
+      WEB: " ",
+      WEB_IDENTIDAD: 0,
+      WEB_USUARIO: 0,
+      CLASIF_PYME_METODO: "A",
+      DECLARAR_ASNEF: "N",
+      PERSONA_RESPONSABILIDAD_PUBLICA: "N",
+      PAIS_NACIONALIDAD: "ES",
+    };
+
+    try {
+      const response = await fetch("http://127.0.0.1:5000/api/identidades", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+      console.log("✅ Respuesta backend:", data);
+    } catch (error) {
+      console.error("❌ Error al enviar:", error);
+    }
   };
 
   return (
-    <div style={{ maxWidth: "800px", margin: "0 auto" }}>
-      <h2>Solicitud de Aval Sociedades</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Razón Social:
-          <input
-            type="text"
-            name="razonSocial"
-            value={formData.razonSocial}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-
-        <label>
-          Nombre Comercial:
-          <input
-            type="text"
-            name="nombreComercial"
-            value={formData.nombreComercial}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-
-        <label>
-          NIF:
-          <input
-            type="text"
-            name="nif"
-            value={formData.nif}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-
-        <label>
-          Dirección:
-          <input
-            type="text"
-            name="direccion"
-            value={formData.direccion}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-
-        <label>
-          Localidad:
-          <input
-            type="text"
-            name="localidad"
-            value={formData.localidad}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-
-        <label>
-          Código Postal:
-          <input
-            type="text"
-            name="cp"
-            value={formData.cp}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-
-        <label>
-          Teléfono:
-          <input
-            type="text"
-            name="telefono"
-            value={formData.telefono}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-
-        <label>
-          Móvil:
-          <input
-            type="text"
-            name="movil"
-            value={formData.movil}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-
-        <label>
-          Email:
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-
-        <label>
-          Representante Legal:
-          <input
-            type="text"
-            name="representanteLegal"
-            value={formData.representanteLegal}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-
-        <label>
-          Cargo:
-          <input
-            type="text"
-            name="cargo"
-            value={formData.cargo}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-
-        <label>
-          Fecha de Constitución:
-          <input
-            type="date"
-            name="fechaConstitucion"
-            value={formData.fechaConstitucion}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-
-        <label>
-          Fecha de Inicio de Actividad:
-          <input
-            type="date"
-            name="fechaInicioActividad"
-            value={formData.fechaInicioActividad}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-
-        <label>
-          CNAE:
-          <input
-            type="text"
-            name="cnae"
-            value={formData.cnae}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-
-        <label>
-          Actividad:
-          <input
-            type="text"
-            name="actividad"
-            value={formData.actividad}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-
-        <label>
-          Importe (€):
-          <input
-            type="number"
-            name="importe"
-            value={formData.importe}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-
-        <label>
-          Plazo (meses):
-          <input
-            type="number"
-            name="plazo"
-            value={formData.plazo}
-            onChange={handleChange}
-          />
-        </label>
-        <br />
-
-        <button type="submit">Enviar Solicitud</button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <h2>Solicitud Sociedades</h2>
+      <input type="text" placeholder="Titular" value={titular} onChange={(e) => setTitular(e.target.value)} />
+      <input type="text" placeholder="Nombre" value={nombre} onChange={(e) => setNombre(e.target.value)} />
+      <input type="text" placeholder="Apellidos" value={apellidos} onChange={(e) => setApellidos(e.target.value)} />
+      <input type="text" placeholder="Nombre Comercial" value={nombreComercial} onChange={(e) => setNombreComercial(e.target.value)} />
+      <input type="text" placeholder="CIT" value={cit} onChange={(e) => setCit(e.target.value)} />
+      <input type="text" placeholder="Actividad" value={actividad} onChange={(e) => setActividad(e.target.value)} />
+      <input type="text" placeholder="Código CNAE" value={codCnae} onChange={(e) => setCodCnae(e.target.value)} />
+      <input type="date" placeholder="Fecha Constitución" value={fechaConstitucion} onChange={(e) => setFechaConstitucion(e.target.value)} />
+      <button type="submit">Enviar</button>
+    </form>
   );
 }
 

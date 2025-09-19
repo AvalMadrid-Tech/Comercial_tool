@@ -6,6 +6,7 @@ from flask_migrate import Migrate
 import sys, os
 from dotenv import load_dotenv
 
+
 load_dotenv()
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 

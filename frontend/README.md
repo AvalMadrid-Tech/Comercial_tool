@@ -1,70 +1,179 @@
-# Getting Started with Create React App
+# Comercial Tool
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Proyecto dividido en **backend (Flask + SQL Server)** y **frontend (React con Create React App)**.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 🚀 Requisitos previos
 
-### `npm start`
+- **Debian 12/13** o Ubuntu equivalente
+- Python 3.11+ (incluye venv y pip)
+- Node.js 20+ y npm
+- SQL Server accesible
+- Docker (opcional para despliegues)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## 📦 Instalación del backend
 
-### `npm test`
+### 1. Dependencias del sistema
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+sudo apt update
+sudo apt install -y curl gnupg apt-transport-https unixodbc-dev
+```
 
-### `npm run build`
+### 2. Instalar drivers de SQL Server (ODBC)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+# Clave GPG de Microsoft
+curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# Repositorio Microsoft (usar Debian 12 "bookworm", compatible con Debian 13)
+echo "deb [signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/debian/12/prod bookworm main" | sudo tee /etc/apt/sources.list.d/microsoft-prod.list
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+# Instalar drivers
+sudo apt update
+sudo apt install -y msodbcsql18 mssql-tools18
+```
 
-### `npm run eject`
+Verificar que `libodbc.so.2` existe:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+ldconfig -p | grep odbc
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 3. Crear entorno virtual y dependencias
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+cd ~/desarrollo_avalmadrid/Comercial_tool/backend
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 4. Configuración Flask
 
-## Learn More
+Definir variable de entorno:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```bash
+export FLASK_APP=app
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Levantar servidor:
 
-### Code Splitting
+```bash
+flask run
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Backend disponible en:
+```
+http://127.0.0.1:5000
+```
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 📦 Instalación del frontend (React)
 
-### Making a Progressive Web App
+### 1. Instalar Node.js y npm
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```bash
+sudo apt update
+sudo apt install -y curl gnupg
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+```
 
-### Advanced Configuration
+Verificar:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```bash
+node -v
+npm -v
+```
 
-### Deployment
+### 2. Instalar dependencias y levantar app
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```bash
+cd ~/desarrollo_avalmadrid/Comercial_tool/frontend
+npm install
+npm start
+```
 
-### `npm run build` fails to minify
+Frontend disponible en:
+```
+http://localhost:3000
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### 3. Construir para producción
+
+```bash
+npm run build
+```
+
+---
+
+## 🔌 Conexión a SQL Server
+
+El backend usa `pyodbc` con los drivers ODBC de Microsoft.
+
+Ejemplo:
+
+```python
+import pyodbc
+
+conn = pyodbc.connect(
+    "DRIVER={ODBC Driver 18 for SQL Server};"
+    "SERVER=mi-servidor-sql;"
+    "DATABASE=mi_basededatos;"
+    "UID=mi_usuario;"
+    "PWD=mi_password;"
+    "TrustServerCertificate=yes;"
+)
+```
+
+---
+
+## 📖 Documentación de la API (Swagger)
+
+Se recomienda integrar **Swagger** para documentar y probar los endpoints del backend:
+
+1. Instalar Flasgger:
+   ```bash
+   pip install flasgger
+   ```
+
+2. Ejemplo mínimo en `app.py`:
+   ```python
+   from flask import Flask
+   from flasgger import Swagger
+
+   app = Flask(__name__)
+   swagger = Swagger(app)
+
+   @app.route('/ping')
+   def ping():
+       """
+       Test endpoint
+       ---
+       responses:
+         200:
+           description: Pong!
+       """
+       return "Pong!"
+   ```
+
+3. Acceder a la UI:
+   ```
+   http://127.0.0.1:5000/apidocs/
+   ```
+
+---
+
+## ✅ Checklist rápido
+
+- [ ] Drivers ODBC instalados (`msodbcsql18`, `unixodbc-dev`)
+- [ ] Entorno virtual creado e instaladas dependencias (`pip install -r requirements.txt`)
+- [ ] Backend corre con `flask run`
+- [ ] Node.js y npm instalados (`node -v`, `npm -v`)
+- [ ] Frontend corre con `npm start`
+- [ ] Documentación disponible en `/apidocs` (si usas Swagger)

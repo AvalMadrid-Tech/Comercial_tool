@@ -1,1 +1,136 @@
-Single-database configuration for Flask.
+# Comercial Tool - Backend
+
+Este backend está desarrollado en **Python + Flask**, y se conecta a **SQL Server** mediante `pyodbc`.
+
+## 🚀 Requisitos previos
+
+- **Debian 12/13** o Ubuntu equivalente
+- Python 3.11+ (incluye venv y pip)
+- Docker == sudo docker compose --profile dev up -d --build // sudo docker compose --profile prod up -d --build
+
+- Acceso a un servidor de SQL Server
+
+---
+
+## 📦 Instalación de dependencias del sistema
+
+Primero, asegúrate de actualizar tu sistema:
+
+```bash
+sudo apt update
+sudo apt install -y curl gnupg2 apt-transport-https unixodbc-dev
+```
+
+### Instalar drivers ODBC de Microsoft
+
+1. Añadir clave GPG de Microsoft:
+   ```bash
+   curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
+   ```
+
+2. Añadir repositorio de Microsoft (usar Debian 12 **bookworm**, compatible con Debian 13):
+   ```bash
+   echo "deb [signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/debian/12/prod bookworm main" | sudo tee /etc/apt/sources.list.d/microsoft-prod.list
+   ```
+
+3. Instalar drivers y herramientas:
+   ```bash
+   sudo apt update
+   sudo apt install -y msodbcsql18 mssql-tools18
+   ```
+
+4. Verificar que `libodbc.so.2` existe:
+   ```bash
+   ldconfig -p | grep odbc
+   ```
+
+---
+
+## 🐍 Preparar entorno virtual de Python
+
+1. Crear y activar entorno virtual:
+   ```bash
+   cd ~/desarrollo_avalmadrid/Comercial_tool/backend
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+2. Instalar dependencias del proyecto:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+---
+
+## ⚙️ Configuración de Flask
+
+Definir la variable `FLASK_APP` apuntando a `app.py`:
+
+```bash
+export FLASK_APP=app
+```
+
+(Para hacerlo permanente, añade esa línea a `~/.bashrc` o al `venv/bin/activate`).
+
+---
+
+## ▶️ Ejecutar el backend
+
+Con el entorno virtual activado:
+
+```bash
+flask run
+```
+
+Por defecto, se levanta en:
+```
+http://127.0.0.1:5000
+```
+
+---
+
+## 🔌 Conexión a SQL Server
+
+El backend usa `pyodbc` con los drivers ODBC de Microsoft.
+
+Ejemplo de conexión en Python:
+
+```python
+import pyodbc
+
+conn = pyodbc.connect(
+    "DRIVER={ODBC Driver 18 for SQL Server};"
+    "SERVER=mi-servidor-sql;"
+    "DATABASE=mi_basededatos;"
+    "UID=mi_usuario;"
+    "PWD=mi_password;"
+    "TrustServerCertificate=yes;"
+)
+```
+
+---
+
+## 🧹 Comandos útiles
+
+- Apagar Flask:
+  ```bash
+  Ctrl + C
+  ```
+- Salir del entorno virtual:
+  ```bash
+  deactivate
+  ```
+- Ver drivers ODBC instalados:
+  ```bash
+  odbcinst -j
+  ```
+
+---
+
+## ✅ Checklist rápido
+
+- [ ] Instalaste `unixodbc-dev`, `msodbcsql18` y `mssql-tools18`
+- [ ] Tienes `libodbc.so.2` disponible (`ldconfig -p | grep odbc`)
+- [ ] Activaste el entorno virtual y ejecutaste `pip install -r requirements.txt`
+- [ ] Definiste `export FLASK_APP=app`
+- [ ] Flask levanta correctamente con `flask run`

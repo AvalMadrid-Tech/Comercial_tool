@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from flasgger import Swagger
 from flask_cors import CORS
 from backend.routes import register_routes
 from backend.connections.postgresql_connect import init_postgres, db_pg
@@ -11,6 +12,8 @@ load_dotenv()
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 app = Flask(__name__)
+swagger = Swagger(app)
+
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "fallback_secret")  # 🔑
 
 CORS(app)
@@ -23,6 +26,17 @@ migrate = Migrate(app, db_pg)
 
 # registrar blueprints
 register_routes(app)
+
+@app.route('/ping')
+def ping():
+    """
+    Test endpoint
+    ---
+    responses:
+        200:
+        description: Pong!
+    """
+    return "Pong!"
 
 @app.route("/")
 def hello():

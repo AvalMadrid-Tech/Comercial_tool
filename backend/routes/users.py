@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, current_app
-from backend.models.users import User
-from backend.connections.postgresql_connect import db_pg as db
+from models.users import User
+from connections.postgresql_connect import db_pg as db
 import jwt
 import datetime
 from functools import wraps

@@ -1,8 +1,8 @@
 from flask import Flask, jsonify
 from flasgger import Swagger
 from flask_cors import CORS
-from backend.routes import register_routes
-from backend.connections.postgresql_connect import init_postgres, db_pg
+from routes import register_routes
+from connections.postgresql_connect import init_postgres, db_pg
 from flask_migrate import Migrate
 import sys, os
 from dotenv import load_dotenv

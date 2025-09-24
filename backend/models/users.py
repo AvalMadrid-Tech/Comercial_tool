@@ -1,4 +1,4 @@
-from backend.connections.postgresql_connect import db_pg
+from connections.postgresql_connect import db_pg
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(db_pg.Model):

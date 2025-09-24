@@ -1,8 +1,8 @@
 import uuid
 from datetime import datetime
 from flask import Blueprint, request, jsonify
-from backend.connections.sql_connect import get_connection
-from backend.models.identidad_model import IdentidadIn, IdentidadOut
+from connections.sql_connect import get_connection
+from models.identidad_model import IdentidadIn, IdentidadOut
 import traceback
 
 identidad_bp = Blueprint("identidad", __name__)

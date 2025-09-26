@@ -3,6 +3,7 @@ from datetime import datetime
 from flask import Blueprint, request, jsonify
 from connections.sql_connect import get_connection
 from models.identidad_model import IdentidadIn, IdentidadOut
+from utils.validators import validar_documento   # 👈 importamos el validador unificado
 import traceback
 
 identidad_bp = Blueprint("identidad", __name__)
@@ -23,8 +24,6 @@ DEFAULTS = {
     "IDIOMA": "S",
     "CLASIF_PYME_METODO": "A",
     "F_CADUCIDAD_CIT": "99991231"  
-
-
 }
 
 
@@ -43,11 +42,18 @@ def create_identidad():
 
         identidad = IdentidadIn(**data)
 
+        # 🔎 Validar que el documento (CIT) es real
+        if not validar_documento(identidad.CIT):
+            return jsonify({
+                "status": "ERROR",
+                "msg": f"El documento {identidad.CIT} no es válido"
+            }), 400
+
         conn = get_connection()
         conn.autocommit = True
         cursor = conn.cursor()
 
-        # 🔎 Validar si CIT ya existe
+        # 🔎 Validar si CIT ya existe en la tabla
         cursor.execute("SELECT 1 FROM IDENTIDADES WHERE CIT = ?", (identidad.CIT,))
         if cursor.fetchone():
             return jsonify({
@@ -135,10 +141,10 @@ def create_identidad():
         cursor.execute(sql, params)
         conn.commit()
         print("✅ Insert realizado correctamente")
+
         cursor.execute("SELECT TOP 1 REF_ID, CIT, F_ALTA FROM dbo.IDENTIDADES WHERE CIT = ?", (identidad.CIT,))
         row = cursor.fetchone()
         print("🔎 Verificación inmediata tras insert:", row)
-
 
         return jsonify({
             "status": "OK",
@@ -148,38 +154,4 @@ def create_identidad():
 
     except Exception as e:
         print(f"❌ Error en create_identidad: {e}")
-        return jsonify({"error": str(e)}), 500
-
-@identidad_bp.route("", methods=["GET"])
-def get_identidades():
-    try:
-        with get_connection() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute("SELECT TOP 50 * FROM Identidades ORDER BY F_ALTA DESC")
-                columns = [col[0] for col in cursor.description]
-                results = [dict(zip(columns, row)) for row in cursor.fetchall()]
-                identidades_out = [IdentidadOut(**r).dict() for r in results]
-                return jsonify(identidades_out)
-    except Exception as e:
-        print("❌ Error en get_identidades:", str(e))
-        traceback.print_exc()
-        return jsonify({"error": str(e)}), 500
-
-
-@identidad_bp.route("/<ref_id>", methods=["GET"])
-def get_identidad(ref_id):
-    try:
-        with get_connection() as conn:
-            with conn.cursor() as cursor:
-                cursor.execute("SELECT * FROM Identidades WHERE REF_ID = ?", (ref_id,))
-                row = cursor.fetchone()
-                if not row:
-                    return jsonify({"error": "Identidad no encontrada"}), 404
-                columns = [col[0] for col in cursor.description]
-                data = dict(zip(columns, row))
-                identidad_out = IdentidadOut(**data).dict()
-                return jsonify(identidad_out)
-    except Exception as e:
-        print("❌ Error en get_identidad:", str(e))
-        traceback.print_exc()
         return jsonify({"error": str(e)}), 500

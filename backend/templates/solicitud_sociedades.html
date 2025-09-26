@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Solicitud de Sociedades</title>
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 12px; }
+    h1, h2, h3 { text-align: center; margin: 10px 0; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+    td { border: 1px solid #000; padding: 6px; vertical-align: top; }
+    .section-title { background: #f0f0f0; font-weight: bold; width: 30%; }
+    .page-break { page-break-before: always; }
+    p { margin: 6px 0; text-align: justify; }
+  </style>
+</head>
+<body>
+
+  <!-- Página 1 -->
+  <h1>Solicitud de Sociedades</h1>
+  <h2>1. Datos Generales</h2>
+  <table>
+    <tr><td class="section-title">Denominación Social</td><td>{{ denominacion_social }}</td></tr>
+    <tr><td class="section-title">NIF</td><td>{{ nif }}</td></tr>
+    <tr><td class="section-title">Domicilio Social</td><td>{{ domicilio_social }}</td></tr>
+    <tr><td class="section-title">Provincia</td><td>{{ provincia }}</td></tr>
+    <tr><td class="section-title">Código Postal</td><td>{{ cp }}</td></tr>
+    <tr><td class="section-title">Teléfono</td><td>{{ telefono }}</td></tr>
+    <tr><td class="section-title">Email</td><td>{{ email }}</td></tr>
+  </table>
+
+  <div class="page-break"></div>
+
+  <!-- Página 2 -->
+  <h2>2. Datos de Actividad</h2>
+  <table>
+    <tr><td class="section-title">CNAE</td><td>{{ cnae }}</td></tr>
+    <tr><td class="section-title">Fecha Inicio Actividad</td><td>{{ f_inicio }}</td></tr>
+    <tr><td class="section-title">Objeto Social</td><td>{{ objeto_social }}</td></tr>
+  </table>
+
+  <h2>3. Órganos de Administración</h2>
+  <table>
+    <tr><td class="section-title">Administrador 1</td><td>{{ admin1 }}</td></tr>
+    <tr><td class="section-title">Administrador 2</td><td>{{ admin2 }}</td></tr>
+    <tr><td class="section-title">Administrador 3</td><td>{{ admin3 }}</td></tr>
+  </table>
+
+  <div class="page-break"></div>
+
+  <!-- Página 3 -->
+  <h2>4. Declaración de Operaciones Vinculadas</h2>
+  <p>
+    El abajo firmante declara, bajo su responsabilidad, que la sociedad ha
+    realizado/no ha realizado operaciones vinculadas de acuerdo con lo dispuesto
+    en la normativa vigente.  
+    (Este apartado deberá cumplimentarse únicamente en caso de existir operaciones vinculadas).
+  </p>
+
+  <h2>5. Declaración/Manifestación de Titularidad Real</h2>
+  <p>
+    Manifiesto bajo mi responsabilidad que los datos relativos a la titularidad
+    real de la sociedad recogidos en el presente formulario se corresponden con
+    la realidad y que comunicaré cualquier cambio que se produzca en el futuro.
+  </p>
+
+  <div class="page-break"></div>
+
+  <!-- Página 4 -->
+  <h2>6. Observaciones y Anexos</h2>
+  <table>
+    <tr><td class="section-title">Observaciones</td><td>{{ observaciones }}</td></tr>
+    <tr><td class="section-title">Anexo 1</td><td>{{ anexo1 }}</td></tr>
+    <tr><td class="section-title">Anexo 2</td><td>{{ anexo2 }}</td></tr>
+    <tr><td class="section-title">Anexo 3</td><td>{{ anexo3 }}</td></tr>
+  </table>
+
+  <h2>7. Protección de Datos</h2>
+  <p style="font-size: 10px;">
+    De conformidad con lo establecido en la Ley Orgánica 3/2018, de 5 de diciembre,
+    de Protección de Datos Personales y garantía de los derechos digitales,
+    se informa a los solicitantes que los datos personales facilitados serán
+    incorporados a un fichero bajo la responsabilidad de la entidad solicitante.
+  </p>
+
+</body>
+</html>
